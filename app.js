@@ -4,11 +4,13 @@ const mongoose = require("mongoose")
 const bcrypt = require ("bcrypt")
 const jwt = require("jsonwebtoken")
 const LoginModel = require("./models/admin")
+const peopleModel = require("./models/people")
+
 const app = express()
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect("mongodb+srv://snehaip:sneha2020@cluster0.swl0hmq.mongodb.net/rescuedb?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect("mongodb+srv://snehaip:sneha2020@cluster0.swl0hmq.mongodb.net/rescuedb?retryWrites=true&w=majority&appName=Cluster0") 
 
 app.post("/adminsignup",(req,res)=>{
     let input = req.body
@@ -52,6 +54,27 @@ app.post("/adminsignup",(req,res)=>{
         ).catch()
     })
 
+
+    app.post("/addPeople",(req,res)=>{
+        let input =req.body
+      
+        let token=req.headers.token
+        
+        jwt.verify(token,"rescue-app",(error,decoded)=>{
+
+
+         if(decoded && decoded.email)
+           {
+                let result=new peopleModel(input)
+                result.save()
+                res.json({"status":"success"})
+    
+            }else
+            {
+                res.json({"status":"Invalid Authentication"}) 
+            } 
+        })
+    })
   
 app.listen(8080,()=>{
     console.log("server started")
