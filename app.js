@@ -76,6 +76,28 @@ app.post("/adminsignup",(req,res)=>{
         })
     })
   
+
+    app.post("/viewall",(req,res)=>{
+        let token = req.headers.token
+        jwt.verify(token,"rescue-app",(error,decoded)=>{
+            if (decoded && decoded.email) {
+                peopleModel.find().then(
+                    (items)=>{
+                        res.json(items)
+                    }
+                ).catch(
+                    (error)=>{
+                        res.json({"status":"error"})
+                    }
+                )
+                
+            } else {
+                res.json({"status":"Invalid Authentication"})
+            }
+        })
+    })
+
+
 app.listen(8080,()=>{
     console.log("server started")
 })
